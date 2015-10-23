@@ -7,35 +7,38 @@ use Exporter ();
 
 sub import {
     my $package = shift;
-    my $caller  = caller;
+    my $exporter = caller();
 
-    my $export      = \@{"$caller::EXPORT"};
-    my $export_ok   = \@{"$caller::EXPORT_OK"};
-    my $export_tags = \%{"$caller::EXPORT"};
+    my $export      = \@{"$exporter\::EXPORT"};
+    my $export_ok   = \@{"$exporter\::EXPORT_OK"};
+    my $export_tags = \%{"$exporter\::EXPORT_TAGS"};
 
-    {
-        last if @$export || @$export_ok || keys(%$export_tags);
-        my $metas = \%{"$caller\::SPEC"};
-
-        for my $k (keys %$metas) {
-            # for now we limit ourselves to subs
-            next unless $k =~ /\A\w+\z/;
-            my @tags = @{ $metas->{$k}{tags} // [] };
-            next if grep {$_ eq 'export:never'} @tags;
-            if (grep {$_ eq 'export:default'} @tags) {
-                push @$export, $k;
-            } else {
-                push @$export_ok, $k;
+    if (@_ && $_[0] eq 'import') {
+        shift @_;
+        *{"$exporter\::import"} = sub {
+            my $importer = caller;
+            {
+                last if @$export || @$export_ok || keys(%$export_tags);
+                my $metas = \%{"$exporter\::SPEC"};
+                for my $k (keys %$metas) {
+                    # for now we limit ourselves to subs
+                    next unless $k =~ /\A\w+\z/;
+                    my @tags = @{ $metas->{$k}{tags} // [] };
+                    next if grep {$_ eq 'export:never'} @tags;
+                    if (grep {$_ eq 'export:default'} @tags) {
+                        push @$export, $k;
+                    } else {
+                        push @$export_ok, $k;
+                    }
+                    for my $tag (@tags) {
+                        s/\Aexport://;
+                        push @{ $export_tags->{$tag} }, $k;
+                    }
+                }
             }
-            for my $tag (@tags) {
-                s/\Aexport://;
-                push @{ $export_tags->{$tag} }, $k;
-            }
-        }
+            goto \&Exporter::import;
+        };
     }
-
-  SKIP:
-    goto &Exporter::import;
 }
 
 1;
