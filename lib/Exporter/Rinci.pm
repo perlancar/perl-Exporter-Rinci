@@ -23,7 +23,7 @@ sub import {
                 for my $k (keys %$metas) {
                     # for now we limit ourselves to subs
                     next unless $k =~ /\A\w+\z/;
-                    my @tags = @{ $metas->{$k}{tags} // [] };
+                    my @tags = @{ $metas->{$k}{tags} || [] };
                     next if grep {$_ eq 'export:never'} @tags;
                     if (grep {$_ eq 'export:default'} @tags) {
                         push @$export, $k;
