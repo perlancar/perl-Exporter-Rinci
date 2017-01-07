@@ -1,5 +1,3 @@
-Revision history for Exporter-Rinci
-
 0.02    2016-01-19 (PERLANCAR)
 
 	- Avoid 5.10-ism (defined-or) to pass on 5.8 [CT].
