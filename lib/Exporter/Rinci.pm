@@ -73,7 +73,7 @@ sub import {
 Exporter::Rinci is a simple wrapper for L<Exporter>. Before handing out control
 to Exporter's import(), it will look at the exporting module's C<@EXPORT>,
 C<@EXPORT_OK>, and C<%EXPORT_TAGS> and if they are empty will fill them out with
-data from Rinci metadata (C<%SPEC>). The rules are similar to
+data from L<Rinci> metadata (C<%SPEC>). The rules are similar to
 L<Perinci::Exporter>: all functions will be put in C<@EXPORT_OK>, except
 functions with C<export:never> tag will not be exported and functions with
 C<export:default> tag will be put in C<@EXPORT>. C<%EXPORT_TAGS> will also be
@@ -82,6 +82,9 @@ filled from functions' tags.
 
 =head1 SEE ALSO
 
-L<Perinci::Exporter>
+If you want something more full-featured, there's L<Perinci::Exporter>. If
+Exporter::Rinci is like Exporter.pm + Rinci, then Perinci::Exporter is like
+L<Sub::Exporter> + Rinci. It features subroutine renaming, wrapping (adding
+retries, timeouts, etc).
 
 =cut
